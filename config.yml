@@ -1,0 +1,9 @@
+devices:
+  - aa:bb:cc:dd:ee:ff # foo
+  - 00:11:22:33:44:55 # bar
+hours:
+  - 10
+  - 22
+gateway:
+  url: https://tuyagw.example.com
+  auth: this_is_a_secretive_auth_string
