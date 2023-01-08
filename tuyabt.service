@@ -4,8 +4,19 @@ After=network.target
 
 [Service]
 Type=simple
-User=nobody
-ExecStart=/srv/tuya/venv/bin/python -u /srv/tuya/tuyabt /srv/tuya/tuyabt.yml
+LoadCredential=config:/srv/tuya/tuyabt.yml
+ExecStart=/srv/tuya/tuyabt "${CREDENTIALS_DIRECTORY}/config"
+
+TemporaryFileSystem=/srv
+BindReadOnlyPaths=/srv/tuya/tuyabt
+BindReadOnlyPaths=/srv/tuya/venv
+
+DynamicUser=yes
+CapabilityBoundingSet=
+
+Restart=always
+RestartSec=3
+
 NoNewPrivileges=true
 PrivateTmp=yes
 PrivateDevices=yes
@@ -16,13 +27,12 @@ ProtectKernelTunables=yes
 ProtectKernelModules=yes
 ProtectKernelLogs=yes
 ProtectControlGroups=yes
+ProtectProc=noaccess
 MemoryDenyWriteExecute=yes
 RestrictRealtime=yes
 RestrictSUIDSGID=yes
 RestrictNamespaces=yes
 LockPersonality=yes
-Restart=always
-RestartSec=3
 
 [Install]
 WantedBy=multi-user.target

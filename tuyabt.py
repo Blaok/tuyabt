@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/srv/tuya/venv/bin/python -u
 """Monitors bluetooth devices and turns on/off the light automatically.
 
 Requires: `apt-get install bluez libbluetooth-dev`
