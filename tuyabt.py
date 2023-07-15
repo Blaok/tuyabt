@@ -7,12 +7,32 @@ Requires: `apt-get install bluez libbluetooth-dev`
 import datetime
 import sys
 import time
-from typing import IO
+from typing import IO, Union
 
+import astral
+import astral.sun
 import bt_proximity
 import requests
 import yaml
 from absl import app, logging
+
+_AstralTime = dict[str, tuple[float, float]]
+
+
+def _parse_time(time: Union[int, float, _AstralTime]) -> datetime.time:
+  if isinstance(time, (int, float)):
+    return datetime.time(time)
+
+  if len(time) != 1:
+    raise ValueError(f'invalid astral time config: {time}')
+
+  event, coordinates = next(iter(time.items()))
+  observer = astral.Observer(*coordinates)
+  tzinfo = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+  if event == 'sunset':
+    return astral.sun.sunset(observer, tzinfo=tzinfo).time()
+
+  raise ValueError(f'invalid astral event: {event}')
 
 
 class TuyaBt:
@@ -21,7 +41,12 @@ class TuyaBt:
     self.rssi_objects = [
         bt_proximity.BluetoothRSSI(x) for x in config['devices']
     ]
-    self.begin, self.end = (datetime.time(x) for x in config['hours'])
+    self.begin, self.end = (x for x in config['hours'])
+    logging.info(
+        'Effective hours: [%s, %s]',
+        _parse_time(self.begin),
+        _parse_time(self.end),
+    )
     self.auth = config['gateway']['auth']
     self.url = config['gateway']['url']
 
@@ -44,7 +69,9 @@ class TuyaBt:
 
   @property
   def is_in_active_hours(self) -> bool:
-    return self.begin <= datetime.datetime.now().time() <= self.end
+    begin = _parse_time(self.begin)
+    end = _parse_time(self.end)
+    return begin <= datetime.datetime.now().time() <= end
 
   @property
   def active_device_count(self) -> int:

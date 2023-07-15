@@ -2,7 +2,7 @@ devices:
   - aa:bb:cc:dd:ee:ff # foo
   - 00:11:22:33:44:55 # bar
 hours:
-  - 10
+  - sunset: [37.42207456768989, -122.08408544623506] # GPS coordinates
   - 22
 gateway:
   url: https://tuyagw.example.com
