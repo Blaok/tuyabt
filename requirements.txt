@@ -1,6 +1,6 @@
 absl-py
 astral
 bt_proximity
-git+https://github.com/pybluez/pybluez@4d46ce14d9e888e3b0c65d5d3ba2a703f8e5e861#egg=pybluez
+git+https://github.com/blaok/pybluez@31e06c09b0579b8d866d5105bb131942af147021#egg=pybluez
 pyyaml
 requests
